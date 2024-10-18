@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db" //there's no need for an env file since it's an SQLITE db
+}
+
+
+model User {
+  id          String     @id @default(uuid())
+  firstName        String
+  lastName       String
+  email String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  roles       Role[]  
+}
+
+model Role {
+   //id, name (e.g., ‘Admin’, ‘User’), permissions (e.g., ‘READ’,
+//‘WRITE’).
+id Int @id @default(autoincrement())
+  name String
+  permissions String  //sqlite doesn't allow for lists of primitive types aws well as enums, so I'd be using arrays in the form of strings.
+
+  user_id String 
+  user User @relation(fields: [user_id], references: [id])
+
+  //id, user_id, title, content, createdAt
+}
