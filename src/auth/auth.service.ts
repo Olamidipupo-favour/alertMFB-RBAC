@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { createUser, createRole, login } from './dto/auth.dto';
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-
+import { UserEntity, RoleEntity, IcommonReturn } from './entities/auth.entities';
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,7 +15,7 @@ export class AuthService {
 
   //test
 
-  getUsers = async (user: any) => {
+  getUsers = async (user: any): Promise<UserEntity[]> => {
     if (!user.roles.some((r) => r.name === 'admin'))
       throw new HttpException(
         'Only admins can get a list of all users',
@@ -24,7 +24,7 @@ export class AuthService {
     return await this.prisma.user.findMany();
   };
 
-  createUser = async (dto: createUser) => {
+  createUser = async (dto: createUser): Promise<IcommonReturn> => {
     await this.prisma.user.create({
       data: {
         email: dto.email,
@@ -52,7 +52,7 @@ export class AuthService {
     };
   };
 
-  createRole = async (dto: createRole, user: any) => {
+  createRole = async (dto: createRole, user: any): Promise< IcommonReturn> => {
     if (!user.roles.some((r) => r.name === 'admin')) {
       throw new HttpException(
         'Only admins can create roles',
@@ -80,7 +80,7 @@ export class AuthService {
     };
   };
 
-  login = async (dto: login) => {
+  login = async (dto: login): Promise<IcommonReturn> => {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
       include: { roles: true },
@@ -96,11 +96,17 @@ export class AuthService {
     console.log(user);
     const payload = { userId: user.id, roles: user.roles };
     return {
+      message:"user logged in succesfully!",
+      data: {
       access_token: this.jwtService.sign(payload),
+      },
+      meta:{
+        loggedInAt: new Date()
+      }
     };
   };
 
-  deleteUser = async (id: string, user: any) => {
+  deleteUser = async (id: string, user: any): Promise<IcommonReturn> => {
     if (user.userId === id) {
       throw new HttpException(
         "You can't delete your own account",
@@ -124,7 +130,7 @@ export class AuthService {
     };
   };
 
-  assignRole = async (id: string, user: any, roleId: number) => {
+  assignRole = async (id: string, user: any, roleId: number): Promise<IcommonReturn> => {
     //confirm user is an admin
     if (!user.roles.some((r) => r.name === 'admin')) {
       throw new HttpException(
@@ -146,7 +152,7 @@ export class AuthService {
       message: 'Role succesfully assigned!',
     };
   };
-  getRoles = async (user: any) => {
+  getRoles = async (user: any): Promise<RoleEntity[]> => {
     if (!user.roles.some((r) => r.name === 'admin')) {
       throw new HttpException(
         "You don't have the required permissions to get roles",

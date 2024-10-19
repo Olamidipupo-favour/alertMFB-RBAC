@@ -1,9 +1,9 @@
 import {
-IsEmail, 
-IsString,
-IsOptional,
-IsNotEmpty,
-IsArray,
+  IsEmail,
+  IsString,
+  IsOptional,
+  IsNotEmpty,
+  IsArray,
 } from 'class-validator';
 
 export class createUser {
@@ -25,7 +25,7 @@ export class createUser {
 }
 
 export class createRole {
-    @IsNotEmpty()
+  @IsNotEmpty()
   @IsString()
   name: string;
 
@@ -43,4 +43,3 @@ export class login {
   @IsString()
   password: string;
 }
-
