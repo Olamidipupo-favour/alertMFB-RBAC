@@ -16,8 +16,8 @@ datasource db {
 
 model User {
   id          String     @id @default(uuid())
-  firstName        String
-  lastName       String
+  firstName        String?
+  lastName       String?
   email String   @unique
   passwordHash String
   createdAt    DateTime @default(now())
@@ -31,8 +31,9 @@ id Int @id @default(autoincrement())
   name String
   permissions String  //sqlite doesn't allow for lists of primitive types aws well as enums, so I'd be using arrays in the form of strings.
 
-  user_id String 
-  user User @relation(fields: [user_id], references: [id])
+  users User[] 
 
   //id, user_id, title, content, createdAt
 }
+
+//Forgot thr many-to-many criteria initally
