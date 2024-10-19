@@ -1,12 +1,15 @@
-import {Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus,} from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import {AuthGuard} from '@nestjs/passport';
+import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class JWTAuthGuard extends AuthGuard('jwt') {
-
-}
-
+export class JWTAuthGuard extends AuthGuard('jwt') {}
 
 @Injectable()
 export class JWTAdminGuard implements CanActivate {
@@ -15,7 +18,7 @@ export class JWTAdminGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const { user, params } = request;
-console.log(user.role);
+    console.log(user.role);
     if (user.role.includes()) {
       throw new HttpException('Access denied', HttpStatus.FORBIDDEN);
     }
