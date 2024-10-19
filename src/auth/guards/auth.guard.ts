@@ -12,14 +12,14 @@ import { AuthGuard } from '@nestjs/passport';
 export class JWTAuthGuard extends AuthGuard('jwt') {}
 
 @Injectable()
-export class JWTAdminGuard implements CanActivate {
+export class roleGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+    const roles = Reflect.getMetadata('roles', context.getHandler());
     const { user, params } = request;
-    console.log(user.role);
-    if (user.role.includes()) {
+    if (!roles.every(r=>user.roles.some(p=>p.name===r))) {
       throw new HttpException('Access denied', HttpStatus.FORBIDDEN);
     }
     return true;

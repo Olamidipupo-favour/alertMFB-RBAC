@@ -3,7 +3,11 @@ import { PrismaService } from '../prisma/prisma.service';
 import { createUser, createRole, login } from './dto/auth.dto';
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { UserEntity, RoleEntity, IcommonReturn } from './entities/auth.entities';
+import {
+  UserEntity,
+  RoleEntity,
+  IcommonReturn,
+} from './entities/auth.entities';
 @Injectable()
 export class AuthService {
   constructor(
@@ -13,34 +17,44 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  //test
 
-  getUsers = async (user: any,page:number=1,limit:number=10): Promise<IcommonReturn> => {
+  getUsers = async (
+    user: any,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<IcommonReturn> => {
     if (!user.roles.some((r) => r.name === 'admin'))
       throw new HttpException(
         'Only admins can get a list of all users',
         HttpStatus.FORBIDDEN,
       );
 
-      const skipped: number = (page-1)*limit;
+    const skipped: number = (page - 1) * limit;
     return {
-message:"Fetched all users succesfully!",
-data: await this.prisma.user.findMany(
-      {
+      message: 'Fetched all users succesfully!',
+      data: await this.prisma.user.findMany({
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          id: true,
+          createdAt: true,
+        },
         take: limit,
-      skip: skipped,
-      }
-    ),
-    meta: {
-skipped,
-limit,
-page,
-    totalCount: await this.prisma.user.count(),
-    hasNext: (await this.prisma.user.count() - (skipped+limit))>0? true: false,
-    hasPrev:  skipped>0?true:false
-    },
-  
-    }
+        skip: skipped,
+      }),
+      meta: {
+        skipped,
+        limit,
+        page,
+        totalCount: await this.prisma.user.count(),
+        hasNext:
+          (await this.prisma.user.count()) - (skipped + limit) > 0
+            ? true
+            : false,
+        hasPrev: skipped > 0 ? true : false,
+      },
+    };
   };
 
   createUser = async (dto: createUser): Promise<IcommonReturn> => {
@@ -71,7 +85,8 @@ page,
     };
   };
 
-  createRole = async (dto: createRole, user: any): Promise< IcommonReturn> => {
+  createRole = async (dto: createRole, user: any): Promise<IcommonReturn> => {
+    console.log(user);
     if (!user.roles.some((r) => r.name === 'admin')) {
       throw new HttpException(
         'Only admins can create roles',
@@ -112,16 +127,15 @@ page,
     if (!isPasswordValid) {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
-    console.log(user);
     const payload = { userId: user.id, roles: user.roles };
     return {
-      message:"user logged in succesfully!",
+      message: 'user logged in succesfully!',
       data: {
-      access_token: this.jwtService.sign(payload),
+        access_token: this.jwtService.sign(payload),
       },
-      meta:{
-        loggedInAt: new Date()
-      }
+      meta: {
+        loggedInAt: new Date(),
+      },
     };
   };
 
@@ -149,7 +163,11 @@ page,
     };
   };
 
-  assignRole = async (id: string, user: any, roleId: number): Promise<IcommonReturn> => {
+  assignRole = async (
+    id: string,
+    user: any,
+    roleId: number,
+  ): Promise<IcommonReturn> => {
     //confirm user is an admin
     if (!user.roles.some((r) => r.name === 'admin')) {
       throw new HttpException(
@@ -171,31 +189,35 @@ page,
       message: 'Role succesfully assigned!',
     };
   };
-  getRoles = async (user: any, page:number=1,limit:number=10,): Promise<IcommonReturn> => {
+  getRoles = async (
+    user: any,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<IcommonReturn> => {
     if (!user.roles.some((r) => r.name === 'admin')) {
       throw new HttpException(
         "You don't have the required permissions to get roles",
         HttpStatus.FORBIDDEN,
       );
     }
-    const skipped: number = (page-1)*limit;
+    const skipped: number = (page - 1) * limit;
     return {
-message:"Fetched all users succesfully!",
-data: await this.prisma.role.findMany(
-      {
+      message: 'All roles fetched succesfully!',
+      data: await this.prisma.role.findMany({
         take: limit,
-      skip: skipped,
-      }
-    ),
-    meta: {
-skipped,
-limit,
-page,
-    totalCount: await this.prisma.role.count(),
-    hasNext: (await this.prisma.role.count() - (skipped+limit))>0? true: false,
-    hasPrev:  skipped>0?true:false
-    },
-  
-    }
+        skip: skipped,
+      }),
+      meta: {
+        skipped,
+        limit,
+        page,
+        totalCount: await this.prisma.role.count(),
+        hasNext:
+          (await this.prisma.role.count()) - (skipped + limit) > 0
+            ? true
+            : false,
+        hasPrev: skipped > 0 ? true : false,
+      },
+    };
   };
 }

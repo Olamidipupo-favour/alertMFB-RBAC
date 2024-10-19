@@ -1,5 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-
 export class UserEntity {
   id: string;
 
@@ -10,18 +8,21 @@ export class UserEntity {
   passwordHash: string;
   createdAt: Date;
   roles?: string[];
-  // @ApiProperty({ example: 1, description: 'The age of the Cat' })
 }
 
-
 export class RoleEntity {
-    name: string;
+  name: string;
   permissions: string;
-  }
+}
 
-  export interface IcommonReturn{
-    message: string,
-    data?: Object| Array<Object>,
-    error?: Object,
-    meta?:Object
-  }
+export interface IcommonReturn {
+  message: string;
+  data?: Object | Array<Object>;
+  error?: Object;
+  meta?: Object;
+}
+
+export interface IUser {
+ userId: string,
+ roles: Array<Object>
+}
