@@ -49,6 +49,11 @@ $ yarn run test:e2e
 $ yarn run test:cov
 ```
 
+## Admin login details, for admin limited routes
+- email => test@test3.com
+- password => Password123!
+
+
 ## Applicant details
 - Name:  Agboola Olamidipupo Favour
 - Email: dipoagboola2019@gmail.com

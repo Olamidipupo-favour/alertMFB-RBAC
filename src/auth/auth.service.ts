@@ -4,8 +4,7 @@ import { createUser, createRole, login } from './dto/auth.dto';
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import {
-  UserEntity,
-  RoleEntity,
+ IUser,
   IcommonReturn,
 } from './entities/auth.entities';
 @Injectable()
@@ -19,7 +18,7 @@ export class AuthService {
 
 
   getUsers = async (
-    user: any,
+    user: IUser,
     page: number = 1,
     limit: number = 10,
   ): Promise<IcommonReturn> => {
@@ -85,7 +84,7 @@ export class AuthService {
     };
   };
 
-  createRole = async (dto: createRole, user: any): Promise<IcommonReturn> => {
+  createRole = async (dto: createRole, user: IUser): Promise<IcommonReturn> => {
     console.log(user);
     if (!user.roles.some((r) => r.name === 'admin')) {
       throw new HttpException(
@@ -139,7 +138,7 @@ export class AuthService {
     };
   };
 
-  deleteUser = async (id: string, user: any): Promise<IcommonReturn> => {
+  deleteUser = async (id: string, user: IUser): Promise<IcommonReturn> => {
     if (user.userId === id) {
       throw new HttpException(
         "You can't delete your own account",
@@ -165,7 +164,7 @@ export class AuthService {
 
   assignRole = async (
     id: string,
-    user: any,
+    user: IUser,
     roleId: number,
   ): Promise<IcommonReturn> => {
     //confirm user is an admin
@@ -190,7 +189,7 @@ export class AuthService {
     };
   };
   getRoles = async (
-    user: any,
+    user: IUser,
     page: number = 1,
     limit: number = 10,
   ): Promise<IcommonReturn> => {

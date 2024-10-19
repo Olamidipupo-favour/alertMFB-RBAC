@@ -24,5 +24,5 @@ export interface IcommonReturn {
 
 export interface IUser {
  userId: string,
- roles: Array<Object>
+ roles: Array<RoleEntity>
 }
