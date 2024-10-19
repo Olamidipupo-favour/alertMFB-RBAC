@@ -74,7 +74,7 @@ export class AuthController {
     description: 'Role succesfully assigned!',
   })
   @UseGuards(JWTAuthGuard)
-  @Post('/users/assign-role')
+  @Post('/user/assign-role')
   @useRoles('admin')
   async assignRole(
     @GetAuthUser() user: any,
