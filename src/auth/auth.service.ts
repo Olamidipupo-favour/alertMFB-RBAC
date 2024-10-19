@@ -15,13 +15,32 @@ export class AuthService {
 
   //test
 
-  getUsers = async (user: any): Promise<UserEntity[]> => {
+  getUsers = async (user: any,page:number=1,limit:number=10): Promise<IcommonReturn> => {
     if (!user.roles.some((r) => r.name === 'admin'))
       throw new HttpException(
         'Only admins can get a list of all users',
         HttpStatus.FORBIDDEN,
       );
-    return await this.prisma.user.findMany();
+
+      const skipped: number = (page-1)*limit;
+    return {
+message:"Fetched all users succesfully!",
+data: await this.prisma.user.findMany(
+      {
+        take: limit,
+      skip: skipped,
+      }
+    ),
+    meta: {
+skipped,
+limit,
+page,
+    totalCount: await this.prisma.user.count(),
+    hasNext: (await this.prisma.user.count() - (skipped+limit))>0? true: false,
+    hasPrev:  skipped>0?true:false
+    },
+  
+    }
   };
 
   createUser = async (dto: createUser): Promise<IcommonReturn> => {
@@ -152,13 +171,31 @@ export class AuthService {
       message: 'Role succesfully assigned!',
     };
   };
-  getRoles = async (user: any): Promise<RoleEntity[]> => {
+  getRoles = async (user: any, page:number=1,limit:number=10,): Promise<IcommonReturn> => {
     if (!user.roles.some((r) => r.name === 'admin')) {
       throw new HttpException(
         "You don't have the required permissions to get roles",
         HttpStatus.FORBIDDEN,
       );
     }
-    return await this.prisma.role.findMany();
+    const skipped: number = (page-1)*limit;
+    return {
+message:"Fetched all users succesfully!",
+data: await this.prisma.role.findMany(
+      {
+        take: limit,
+      skip: skipped,
+      }
+    ),
+    meta: {
+skipped,
+limit,
+page,
+    totalCount: await this.prisma.role.count(),
+    hasNext: (await this.prisma.role.count() - (skipped+limit))>0? true: false,
+    hasPrev:  skipped>0?true:false
+    },
+  
+    }
   };
 }

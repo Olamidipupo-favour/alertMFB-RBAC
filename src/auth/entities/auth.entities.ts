@@ -21,7 +21,7 @@ export class RoleEntity {
 
   export interface IcommonReturn{
     message: string,
-    data?: any,
-    error?: any,
-    meta?:any
+    data?: Object| Array<Object>,
+    error?: Object,
+    meta?:Object
   }

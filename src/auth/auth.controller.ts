@@ -6,6 +6,7 @@ import {
   UseGuards,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { createUser, createRole, login } from './dto/auth.dto';
@@ -18,7 +19,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-
+import { IcommonReturn } from './entities/auth.entities';
 @ApiTags('Auth')
 @Controller('')
 export class AuthController {
@@ -33,8 +34,8 @@ export class AuthController {
   @Get('/users')
   @useRoles('admin')
   @UseGuards(JWTAuthGuard)
-  async getUsers(@GetAuthUser() user: any): Promise<any> {
-    return this.authService.getUsers(user);
+  async getUsers(@GetAuthUser() user: any, @Query('page') page: string='1', @Query('limit') limit: string='10'): Promise<IcommonReturn> {
+    return this.authService.getUsers(user,+page,+limit);
   }
 
   @ApiOperation({ summary: 'Create a new user' })
@@ -43,7 +44,7 @@ export class AuthController {
     description: 'User succesfully created!',
   })
   @Post('/auth/register')
-  async createUser(@Body() dto: createUser): Promise<any> {
+  async createUser(@Body() dto: createUser): Promise<IcommonReturn> {
     return this.authService.createUser(dto);
   }
 
@@ -55,14 +56,14 @@ export class AuthController {
   })
   @UseGuards(JWTAuthGuard, JWTAdminGuard)
   @Post('/auth/create/role')
-  async createRole(@Body() dto: createRole): Promise<any> {
+  async createRole(@Body() dto: createRole): Promise<IcommonReturn> {
     return this.authService.createRole(dto, '');
   }
 
   @ApiOperation({ summary: 'login' })
   @ApiResponse({ status: 200, description: '*returns your jwt token*' })
   @Post('/auth/login')
-  async login(@Body() dto: login): Promise<any> {
+  async login(@Body() dto: login): Promise<IcommonReturn> {
     return this.authService.login(dto);
   }
 
@@ -79,7 +80,7 @@ export class AuthController {
     @GetAuthUser() user: any,
     @Body('id') id: string,
     @Body('roleId') roleId: string,
-  ) {
+  ): Promise<IcommonReturn> {
     return await this.authService.assignRole(id, user, +roleId);
   }
 
@@ -92,7 +93,7 @@ export class AuthController {
   @UseGuards(JWTAuthGuard)
   @useRoles('admin')
   @Delete('/user/:id')
-  async deleteSpecificUser(@Param('id') id: string, @GetAuthUser() user: any) {
+  async deleteSpecificUser(@Param('id') id: string, @GetAuthUser() user: any): Promise<IcommonReturn> {
     return await this.authService.deleteUser(id, user);
   }
 
@@ -105,7 +106,7 @@ export class AuthController {
   @Get('/roles')
   @useRoles('admin')
   @UseGuards(JWTAuthGuard)
-  async getRoles(@GetAuthUser() user: any) {
-    return await this.authService.getRoles(user);
+  async getRoles(@GetAuthUser() user: any, @Query('page') page: string='1', @Query('limit') limit: string='10'): Promise<IcommonReturn> {
+    return await this.authService.getRoles(user,+page,+limit);
   }
 }

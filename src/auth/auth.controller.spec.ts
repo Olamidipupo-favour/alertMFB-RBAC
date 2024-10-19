@@ -51,12 +51,18 @@ describe('AuthController (Integration)', () => {
 
   const getUserStub = () => {
     return {
-      id: 'should-be-a-uuid',
-      email: 'user@test.com',
-      firstName: 'test',
-      lastName: 'test',
-      role: 'user',
-    };
+      "message": "Fetched all users succesfully!",
+      "data": [
+        {
+          "id": "should-be-a-uuid",
+          "firstName": 'test',
+          "lastName": "test",
+          "email": "test@test.com",
+          "passwordHash": "$2b$10$6QWfhHOqBL2yNM.D7ube2uvyM8Ozon9Tz15j8zZssd0vchz.mu9wS",
+          "createdAt": "2024-10-19T00:52:15.249Z"
+        },
+      ]
+    }
   };
 
   const getRoleStub = () => {
@@ -81,7 +87,8 @@ describe('AuthController (Integration)', () => {
 
       const result = await authController.getUsers(getAuthUserStub());
       expect(result).toEqual(users);
-      expect(mockAuthService.getUsers).toHaveBeenCalledWith(getAuthUserStub());
+      expect(mockAuthService.getUsers).toHaveBeenCalledWith(expect.objectContaining(getAuthUserStub()),1,10); 
+
     });
 
     it('should throw an error when the user is not an admin', async () => {
@@ -192,7 +199,8 @@ describe('AuthController (Integration)', () => {
 
       const result = await authController.getRoles(getAuthUserStub());
       expect(result).toEqual(roles);
-      expect(mockAuthService.getRoles).toHaveBeenCalledWith(getAuthUserStub());
+      expect(mockAuthService.getRoles).toHaveBeenCalledWith(expect.objectContaining(getAuthUserStub()),1,10); 
+
     });
   });
 });
