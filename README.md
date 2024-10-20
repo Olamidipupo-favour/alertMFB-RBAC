@@ -11,7 +11,7 @@ The available routes are;
 - /auth/register
 - /auth/create/role
 - /auth/login
-- /users/assign-role
+- /user/assign-role
 - /user/:id
 - /roles
 - /api ; swagger docs are located here
