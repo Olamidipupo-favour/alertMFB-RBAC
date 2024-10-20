@@ -146,11 +146,11 @@ export class AuthService {
       );
     }
     //confirm user is an admin
-    const user_ = await this.prisma.user.findUniqueOrThrow({
-      where: { id },
-      include: { roles: true },
-    });
-    if (!user_.roles.some((r) => r.name === 'admin')) {
+    // const user_ = await this.prisma.user.findUniqueOrThrow({
+    //   where: { id },
+    //   include: { roles: true },
+    // });
+    if (!user.roles.some((r) => r.name === 'admin')) {
       throw new HttpException(
         "You don't have the required permissions to delete this user",
         HttpStatus.FORBIDDEN,
