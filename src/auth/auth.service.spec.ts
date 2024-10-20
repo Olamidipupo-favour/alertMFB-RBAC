@@ -55,7 +55,7 @@ describe('AuthService', () => {
     it('should return a list of users with pagination', async () => {
       const users = [{ id: 'user-id', email: 'user@example.com' }];
       const totalCount = 10;
-      const authUser = { roles: [{ name: 'admin' }] };
+      const authUser = {userId:"should-be-a-uuid", roles: [{ name: 'admin', permissions:JSON.stringify(["READ","WRITE"]) }] };
 
       mockPrismaService.user.findMany.mockResolvedValue(users);
       mockPrismaService.user.count.mockResolvedValue(totalCount);
@@ -75,7 +75,7 @@ describe('AuthService', () => {
     });
 
     it('should throw an error if user is not an admin', async () => {
-      const authUser = { roles: [{ name: 'user' }] };
+      const authUser = {userId:"should-be-a-uuid", roles: [{ name: 'user',permissions:JSON.stringify(["READ","WRITE"]) }] };
 
       await expect(authService.getUsers(authUser)).rejects.toThrow(
         new HttpException('Only admins can get a list of all users', HttpStatus.FORBIDDEN),
@@ -111,7 +111,7 @@ describe('AuthService', () => {
   describe('createRole', () => {
     it('should create a role successfully when user is admin', async () => {
       const dto = { name: 'admin', permissions: ['READ', 'WRITE'] };
-      const authUser = { roles: [{ name: 'admin' }] };
+      const authUser = {userId:"should-be-a-uuid", roles: [{ name: 'admin', permissions:JSON.stringify(["READ","WRITE"]) }] };
 
       mockPrismaService.role.create.mockResolvedValue(true);
 
@@ -127,7 +127,7 @@ describe('AuthService', () => {
 
     it('should throw an error when non-admin user tries to create a role', async () => {
       const dto = { name: 'admin', permissions: ['READ', 'WRITE'] };
-      const authUser = { roles: [{ name: 'user' }] };
+      const authUser = {userId:"should-be-a-uuid", roles: [{ name: 'user', permissions:JSON.stringify(["READ","WRITE"]) }] };
 
       await expect(authService.createRole(dto, authUser)).rejects.toThrow(
         new HttpException('Only admins can create roles', HttpStatus.FORBIDDEN),
@@ -136,7 +136,7 @@ describe('AuthService', () => {
 
     it('should throw an error if invalid permission is provided', async () => {
       const dto = { name: 'admin', permissions: ['INVALID'] };
-      const authUser = { roles: [{ name: 'admin' }] };
+      const authUser = {userId:"should-be-a-uuid", roles: [{ name: 'admin', permissions:JSON.stringify(["READ","WRITE"]) }] };
 
       await expect(authService.createRole(dto, authUser)).rejects.toThrow(
         new HttpException('Invalid permission: INVALID', HttpStatus.BAD_REQUEST),
@@ -172,7 +172,7 @@ describe('AuthService', () => {
   describe('deleteUser', () => {
     it('should delete a user successfully', async () => {
       const id = 'user-id';
-      const authUser = { userId: 'admin-id', roles: [{ name: 'admin' }] };
+      const authUser = { userId: 'admin-id', roles: [{ name: 'admin', permissions:JSON.stringify(["READ","WRITE"]) }] };
 
       mockPrismaService.user.findUniqueOrThrow.mockResolvedValue({
         id,
@@ -188,7 +188,7 @@ describe('AuthService', () => {
 
     it('should throw an error if user tries to delete their own account', async () => {
       const id = 'admin-id';
-      const authUser = { userId: 'admin-id', roles: [{ name: 'admin' }] };
+      const authUser = { userId: 'admin-id', roles: [{ name: 'admin', permissions:JSON.stringify(["READ","WRITE"]) }] };
 
       await expect(authService.deleteUser(id, authUser)).rejects.toThrow(
         new HttpException("You can't delete your own account", HttpStatus.FORBIDDEN),
@@ -197,11 +197,11 @@ describe('AuthService', () => {
 
     it('should throw an error if non-admin tries to delete another user', async () => {
       const id = 'user-id';
-      const authUser = { userId: 'admin-id', roles: [{ name: 'user' }] };
+      const authUser = { userId: 'admin-id', roles: [{ name: 'user', permissions:JSON.stringify(["READ","WRITE"]) }] };
 
       mockPrismaService.user.findUniqueOrThrow.mockResolvedValue({
         id,
-        roles: [{ name: 'user' }],
+        roles: [{ name: 'user', permissions:JSON.stringify(["READ","WRITE"]) }],
       });
 
       await expect(authService.deleteUser(id, authUser)).rejects.toThrow(
@@ -212,7 +212,7 @@ describe('AuthService', () => {
 
   describe('assignRole', () => {
     it('should assign a role to a user successfully', async () => {
-      const authUser = { roles: [{ name: 'admin' }] };
+      const authUser = {userId:"should-be-a-uuid", roles: [{ name: 'admin', permissions:JSON.stringify(["READ","WRITE"]) }] };
       const userId = 'user-id';
       const roleId = 1;
 
@@ -233,7 +233,7 @@ describe('AuthService', () => {
     it('should return a list of roles with pagination', async () => {
       const roles = [{ id: 'role-id', name: 'admin' }];
       const totalCount = 5;
-      const authUser = { roles: [{ name: 'admin' }] };
+      const authUser = {userId:"should-be-a-uuid", roles: [{ name: 'admin', permissions:JSON.stringify(["READ","WRITE"]) }] };
 
       mockPrismaService.role.findMany.mockResolvedValue(roles);
       mockPrismaService.role.count.mockResolvedValue(totalCount);
