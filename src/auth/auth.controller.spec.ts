@@ -85,9 +85,9 @@ describe('AuthController (Integration)', () => {
       const users = [getUserStub()];
       mockAuthService.getUsers.mockResolvedValue(users);
 
-      const result = await authController.getUsers(getAuthUserStub());
+      const result = await authController.getUsers({userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]});
       expect(result).toEqual(users);
-      expect(mockAuthService.getUsers).toHaveBeenCalledWith(expect.objectContaining(getAuthUserStub()),1,10); 
+      expect(mockAuthService.getUsers).toHaveBeenCalledWith({userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]},1,10); 
 
     });
 
@@ -100,7 +100,7 @@ describe('AuthController (Integration)', () => {
       });
 
       try {
-        await authController.getUsers(getAuthUserStub('user'));
+        await authController.getUsers({userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]});
       } catch (e) {
         expect(e.status).toEqual(HttpStatus.FORBIDDEN);
         expect(e.message).toEqual('Only admins can get a list of all users');
@@ -150,20 +150,20 @@ describe('AuthController (Integration)', () => {
       const createRoleDto = { name: 'admin', permissions: ['READ', 'WRITE'] };
       mockAuthService.createRole.mockResolvedValue({ message: 'Role successfully created!' });
 
-      const result = await authController.createRole(createRoleDto);
+      const result = await authController.createRole(createRoleDto,{userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]});
       expect(result).toEqual({ message: 'Role successfully created!' });
-      expect(mockAuthService.createRole).toHaveBeenCalledWith(createRoleDto, '');
+      expect(mockAuthService.createRole).toHaveBeenCalledWith(createRoleDto, {userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]});
     });
   });
 
   describe('assignRole', () => {
     it('should assign a role to a user', async () => {
-      const assignRoleDto = { id: 'should-be-uuid', roleId: 2 };
+      const assignRoleDto = { id: 'should-be-a-uuid', roleId: 2 };
       mockAuthService.assignRole.mockResolvedValue({ message: 'Role successfully assigned!' });
 
-      const result = await authController.assignRole(getAuthUserStub(), assignRoleDto.id, assignRoleDto.roleId.toString());
+      const result = await authController.assignRole({userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]}, assignRoleDto);
       expect(result).toEqual({ message: 'Role successfully assigned!' });
-      expect(mockAuthService.assignRole).toHaveBeenCalledWith(assignRoleDto.id, getAuthUserStub(), +assignRoleDto.roleId);
+      expect(mockAuthService.assignRole).toHaveBeenCalledWith(assignRoleDto.id,{userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]}, +assignRoleDto.roleId);
     });
   });
 
@@ -172,9 +172,9 @@ describe('AuthController (Integration)', () => {
       const id = 'should-be-a-uuid';
       mockAuthService.deleteUser.mockResolvedValue({ message: 'User successfully deleted!' });
 
-      const result = await authController.deleteSpecificUser(id, getAuthUserStub());
+      const result = await authController.deleteSpecificUser(id, {userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]});
       expect(result).toEqual({ message: 'User successfully deleted!' });
-      expect(mockAuthService.deleteUser).toHaveBeenCalledWith(id, getAuthUserStub());
+      expect(mockAuthService.deleteUser).toHaveBeenCalledWith(id, {userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]});
     });
 
     it('should throw an error if user tries to delete their own account', async () => {
@@ -184,7 +184,7 @@ describe('AuthController (Integration)', () => {
       });
 
       try {
-        await authController.deleteSpecificUser(id, getAuthUserStub());
+        await authController.deleteSpecificUser(id, {userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]});
       } catch (e) {
         expect(e.status).toEqual(HttpStatus.FORBIDDEN);
         expect(e.message).toEqual("You can't delete your own account");
@@ -197,9 +197,9 @@ describe('AuthController (Integration)', () => {
       const roles = [getRoleStub()];
       mockAuthService.getRoles.mockResolvedValue(roles);
 
-      const result = await authController.getRoles(getAuthUserStub());
+      const result = await authController.getRoles({userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]});
       expect(result).toEqual(roles);
-      expect(mockAuthService.getRoles).toHaveBeenCalledWith(expect.objectContaining(getAuthUserStub()),1,10); 
+      expect(mockAuthService.getRoles).toHaveBeenCalledWith({userId:"should-be-a-uuid", roles:[{name:"admin", permissions:JSON.stringify(["READ","WRITE"])}]},1,10); 
 
     });
   });
