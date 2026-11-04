@@ -1,59 +1,61 @@
+# AlertMFB RBAC API
 
-# Role Based Access Control implementation for AlertMFB's interview
+Role-based access control API built with NestJS, Prisma, and SQLite for an
+AlertMFB interview task.
 
-## Description
+## Stack
 
-As detailed in the task description mailed to me, I designed the entire backend infrastructre in nest js in combination with prisma( with SQLite as my SQL engine, since I wanted to write code that can be setup with minimal effort.)
-I also used libraries like passport, class-validator, class-transformer and bcrypt apart from  nestjs's core libraries for dealing with tasks such as data validation, JWT generation, etc.
+- NestJS 10
+- Prisma 5 with SQLite
+- Passport JWT, 2-day token expiry
+- bcrypt password hashing
+- class-validator and class-transformer
+- Swagger
 
-The available routes are;
-- /users
-- /auth/register
-- /auth/create/role
-- /auth/login
-- /user/assign-role
-- /user/:id
-- /roles
-- /api ; swagger docs are located here
+## Features
 
+- Register and log in users
+- Create roles with permission strings
+- Assign roles to users
+- List users and roles
+- Delete users
+- Swagger docs
 
-## Project setup
-
-```bash
-$ yarn install
-```
-
-## Compile and run the project
+## Setup
 
 ```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+yarn install
+cp .env.example .env
+npx prisma migrate dev
+yarn start:dev
 ```
 
-## Run tests
+Set `JWT_SECRET` in `.env` before running anything outside local tests. The
+default is intentionally insecure.
+
+The API listens on `http://localhost:3000`. Swagger is at `/api`.
+
+## Routes
+
+| Method | Path | Purpose |
+| ------ | ---- | ------- |
+| `GET` | `/users` | List users |
+| `POST` | `/auth/register` | Create a user |
+| `POST` | `/auth/login` | Log in and receive a JWT |
+| `POST` | `/auth/create/role` | Create a role with permissions |
+| `POST` | `/user/assign-role` | Assign a role to a user |
+| `DELETE` | `/user/:id` | Delete a user |
+| `GET` | `/roles` | List roles |
+
+## Tests
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+yarn test
+yarn test:e2e
+yarn test:cov
 ```
 
-## Admin login details, for admin limited routes
-- email => test@test3.com
-- password => Password123!
+## Notes
 
-
-## Applicant details
-- Name:  Agboola Olamidipupo Favour
-- Email: dipoagboola2019@gmail.com
+SQLite keeps setup to one command, which is why the interview task uses it.
+`prisma/dev.db` is local test data, not a production database.
